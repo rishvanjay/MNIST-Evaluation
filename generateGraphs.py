@@ -59,21 +59,21 @@ X_train, X_test, y_train, y_test = final.getdata()
 # y = [resPen001, resPen01, resPen1, resPen10]
 # x = [0.01, 0.1, 1, 10]
 
-# y = []
-# x = []
-# penalties = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-# for p in penalties:
+y = []
+x = []
+penalties = [0.1, 0.2, 0.5, 1, 2, 5]
+for p in penalties:
 
-#     y.append(np.mean(final.run(X_train, X_test, y_train, y_test, 1, 0.01, p)))
-#     x.append(p)
+    y.append(np.mean(final.run(X_train, X_test, y_train, y_test, 1, 0.01, p)))
+    x.append(p)
 
 
 
-# pyplot.plot(x, y)
-# pyplot.title('Penalty vs Overall Accuracy')
-# pyplot.xlabel('Penalty')
-# pyplot.ylabel('Accuracy')
-# pyplot.show()
+pyplot.plot(x, y)
+pyplot.title('Penalty vs Overall Accuracy')
+pyplot.xlabel('Penalty')
+pyplot.ylabel('Accuracy')
+pyplot.show()
 
 #comparing overall accuracy with different gamma
 
