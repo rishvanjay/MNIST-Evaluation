@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
+
 def getdata():
 	trainsize = 5000
 	testsize = 1000
@@ -62,8 +63,8 @@ def getdata():
 				data = f.read(1)
 				testsample[j] = util.round(struct.unpack('>B',data)[0])
 			testsamples[i] = util.subsample(util.resize(testsample), 14)
-	
-	y_train = traininglabels
+
+		y_train = traininglabels
 	X_train = trainingsamples
 	y_test = testlabels
 	X_test = testsamples
@@ -72,16 +73,19 @@ def getdata():
 
 # def run(X, y):
 def run(X_train, X_test, y_train, y_test, epochs, gam, C_pen):
-	# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42, shuffle=True)
-	#epochs
+
+
+	#create classifiers & accuracy measures
 	fin = []
+
 	clfs_o = list()
-	acc = np.zeros(10)
-	#classifiers
 	for k in range(10):
-		clfs_o.append(SVC(gamma=gam))
+
+		clfs_o.append(SVC(gamma=gam, C=C_pen))
+
+	acc = np.zeros(10)
 	
-	# fin = []
+	#over epochs
 	for p in range (epochs):
 		r_X_train, r_y_train = util.shuffle(X_train, y_train, 1000)
 		r_X_test, r_y_test = util.shuffle(X_test, y_test, 200)
@@ -91,7 +95,9 @@ def run(X_train, X_test, y_train, y_test, epochs, gam, C_pen):
 		X_test_fold = np.empty((200,196))
 		y_test_fold = np.empty(200) 
 		k_scores = np.zeros(10)
-		#folds
+
+		#create folds
+
 		for i in range(5):
 			flag = False
 			for k in range(5):
@@ -110,7 +116,9 @@ def run(X_train, X_test, y_train, y_test, epochs, gam, C_pen):
 			clfs = list()
 			#train and test classifiers
 			for k in range(10):
-				clfs.append(SVC(gamma=gam, C=C_pen))
+
+				clfs.append(clfs_o[k])
+
 			for k in range(10):
 				y_e_train_folds = np.empty(800)
 				for j in range (len(y_train_folds)):
@@ -120,7 +128,7 @@ def run(X_train, X_test, y_train, y_test, epochs, gam, C_pen):
 						y_e_train_folds[j] = -1
 				clfs[k].fit(X_train_folds, y_e_train_folds)
 				pred = clfs[k].predict(X_test_fold)
-				#print(clfs[k].get_params())
+
 			
 				y_e_test_fold = np.empty(200)
 				for j in range (len(y_test_fold)):
@@ -141,21 +149,26 @@ def run(X_train, X_test, y_train, y_test, epochs, gam, C_pen):
 						else:
 							fn +=1
 				k_scores[k] += (tn + tp) /len(y_test_fold)
-				#to do precision, recall etc
-				# precision = tp / (tp + fp)
-				# recall = tp/(tp + fn)
+
 		k_scores = k_scores/5.0		
+		#update classifers based on validation
 		for i in range(10):
 			if k_scores[i] > acc[i]:
 				acc[i] = k_scores[i]
 				clfs_o[i] = clfs[i]
+
+		print(k_scores)
 		fin.append(k_scores)
-		# print(fin)
-	# acc = accuracy_score(y_test, pred, normalize=True)
-	# acc = f1_score(y_test, pred, average="weighted")
+
 	return fin
+
+
 
 if __name__ == "__main__":
 	X_train, X_test, y_train, y_test = getdata()
-	print (run(X_train, X_test, y_train, y_test, 2, 0.01, 0.5))
+	
+	if (len(sys.argv) == 1):
+		run(X_train, X_test, y_train, y_test, 3, 0.01, 4)
+	else:
+		run(X_train, X_test, y_train, y_test, int(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]))
 

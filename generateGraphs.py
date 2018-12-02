@@ -21,7 +21,7 @@ X_train, X_test, y_train, y_test = final.getdata()
 # resGam01 = final.run(X_train, X_test, y_train, y_test, 1, 0.1, 0.01)
 # resGam1 = final.run(X_train, X_test, y_train, y_test, 1, 1, 0.01)
 
-# resCompDigits = final.run(X_train, X_test, y_train, y_test, 1, 0.01, 0.5)
+resCompDigits = final.run(X_train, X_test, y_train, y_test, 1, 0.01, 0.5)
 
 # accuracy vs hyperparameter graphs
 
@@ -82,22 +82,32 @@ pyplot.show()
 # resGam1 = np.mean(resGam1)
 # y = [resGam001, resGam01, resGam1]
 # x = [0.01, 0.1, 1]
-# pyplot.plot(x, y)
-# pyplot.title('Gamma vs Overall Accuracy')
-# pyplot.xlabel('Gamma')
-# pyplot.ylabel('Accuracy')
-# pyplot.show()
+
+y = []
+x = []
+gammas = [0.0001, 0.001, 0.01, 0.1, 0.5]
+for g in gammas:
+
+    y.append(np.mean(final.run(X_train, X_test, y_train, y_test, 1, g, 0.5)))
+    x.append(g)
+
+pyplot.plot(x, y)
+pyplot.title('Gamma vs Overall Accuracy')
+pyplot.xlabel('Gamma')
+pyplot.ylabel('Accuracy')
+print (y)
+pyplot.show()
 
 
 #compare which digits train more accurately
 
-# y = resCompDigits[0]
-# x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-# pyplot.plot(x, y)
-# pyplot.title('Digit vs Training Accuracy')
-# pyplot.xlabel('Digit')
-# pyplot.ylabel('Accuracy')
-# pyplot.show()
+y = resCompDigits[0]
+x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+pyplot.plot(x, y)
+pyplot.title('Digit vs Training Accuracy')
+pyplot.xlabel('Digit')
+pyplot.ylabel('Accuracy')
+pyplot.show()
 
 
 
